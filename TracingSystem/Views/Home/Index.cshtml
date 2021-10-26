@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    @model List<IssueList>
+}
+
+@*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>*@
+<div class="text-center">
+    @if (ViewBag.CreateIssue == "True")
+    {
+        <input type="button" value="Create" onclick="location.href='@Url.Action("Index", "Issue")'" />
+    }
+   
+    <table class="table table-striped">
+
+        <thead>
+            <tr>
+                <th scope="col">流水號</th>
+                <th scope="col">主題</th>
+                <th scope="col">描述</th>
+                <th scope="col">狀態</th>
+                <th scope="col">最後維護日期</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+            <tr>
+                <th scope="row">@item.Id</th>
+                <td>@item.Summary</td>
+                <td>@item.Description</td>
+
+                @if (item.Status == 1)
+                {
+                    <td>已解決</td>
+                }
+                else
+                {
+                    <td>尚未解決</td>
+                }
+                <td>@item.LstMaintDt.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @if (ViewBag.UpdateIssue == "True")
+                    {
+                        <input class="btn btn-primary btn-xs editBtn" type="button" value="Edit" onclick="location.href='@Url.Action("Update", "Issue", new { id = item.Id })'" />
+                    }
+                    @if (ViewBag.DeleteIssue == "True")
+                    {
+                        <input class="btn btn-outline-danger btn-xs delBtn" type="button" value="Delete" data-id="@item.Id" />
+                    }
+                    @if (ViewBag.ResolveIssue == "True" && item.Status == 0)
+                    {
+                        <button class="btn btn-outline-success btn-xs resolveBtn" data-id="@item.Id"> Resolve</button>
+                    }
+
+
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        console.log("ready!");
+    });
+    $(document).on('click', '.delBtn', function () {
+
+        if (confirm('確定刪除嗎?')) {
+
+            window.location.href = '@Url.Action("Delete", "Issue")' + "?id=" + $(this).data("id");
+        }
+    });
+
+    $(document).on('click', '.resolveBtn', function () {
+
+        if (confirm('確定完成嗎?')) {
+
+            window.location.href = '@Url.Action("UpdateStatus", "Issue")' + "?id=" + $(this).data("id");
+        }
+    });
+</script>
