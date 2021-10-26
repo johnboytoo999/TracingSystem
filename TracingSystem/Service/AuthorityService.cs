@@ -62,7 +62,13 @@ namespace TracingSystem.Service
         private TrackingUser ValidateLogin(string account, string pd)
         {
             TrackingUser user = _db.TrackingUsers.FirstOrDefault(x => x.Account == account);
+
+            if(user == null)
+            {
+                return null;
+            }
             bool result = HashHelper.Verify(pd, user.Password);
+
             if(result)
             {
                return user;
